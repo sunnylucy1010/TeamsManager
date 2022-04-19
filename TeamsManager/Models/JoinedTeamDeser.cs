@@ -13,7 +13,6 @@ namespace TeamsManager.Models
             public string id { get; set; }
             public string createdDateTime { get; set; }
             public string displayName { get; set; }
-            public string description { get; set; }
             public object internalId { get; set; }
             //public object classification { get; set; }
             //public object specialization { get; set; }

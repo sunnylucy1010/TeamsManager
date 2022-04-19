@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,35 +13,31 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.Identity.Client;
-using System.Text.Json;
-using TeamsManager.ViewModels;
 using TeamsManager.Models;
+using TeamsManager.ViewModels;
 
-namespace TeamsManager
+namespace TeamsManager.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for LoginPage.xaml
     /// </summary>
-    
-    public partial class MainWindow : Window
+    public partial class LoginPage : Page
     {
-        //Set the API Endpoint to Graph 'me' endpoint
-        string accessToken;
-        string graphAPIEndpoint = "https://graph.microsoft.com/v1.0/me";
-        string graphJoinedTeams = "https://graph.microsoft.com/v1.0/me/joinedTeams";
-        string graphTeamInfo = "https://graph.microsoft.com/v1.0/teams/";
-
-        //Teams storage
-        public List<Team> joinedTeams = new List<Team>();
-        ////Set the scope for API call to user.read
-        string[] scopes = new string[] { "user.read", "team.readbasic.all" };
-
-
-        public MainWindow()
+        public LoginPage()
         {
             InitializeComponent();
         }
+
+        //Set the API Endpoint to Graph 'me' endpoint
+        public static string accessToken;
+        string graphAPIEndpoint = "https://graph.microsoft.com/v1.0/me";
+
+
+        //Teams storage
+
+        ////Set the scope for API call to user.read
+        string[] scopes = new string[] { "user.read", "team.readbasic.all" };
+
 
         /// <summary>
         /// Call AcquireToken - to acquire a token requiring user to sign-in
@@ -96,7 +93,9 @@ namespace TeamsManager
 
             }
         }
-                
+
+        
+
         /// <summary>
         /// Sign out the current user
         /// </summary>
@@ -133,43 +132,6 @@ namespace TeamsManager
             }
         }
 
-        private async void DisplayTeamsButton_Click(object sender, RoutedEventArgs e)
-        {
-            string jsonString = await APIService.GetHttpContentWithToken(graphJoinedTeams, accessToken);
-            JoinedTeamDeser.Root? root = JsonSerializer.Deserialize<JoinedTeamDeser.Root>(jsonString);
-            TeamList.Text = "";
-            foreach (var item in root.value)
-            {
-                TeamList.Text += item.id + item.displayName + "\n";
-            }
-        }
-
-        private async void CrawlDataButton_Click(object sender, RoutedEventArgs e)
-        {
-            string jsonString = await APIService.GetHttpContentWithToken(graphJoinedTeams, accessToken);
-            JoinedTeamDeser.Root? root = JsonSerializer.Deserialize<JoinedTeamDeser.Root>(jsonString);
-            TeamList.Text = "";
-            foreach (var item in root.value)
-            {
-                jsonString = await APIService.GetHttpContentWithToken(graphTeamInfo + item.id, accessToken);
-                EachTeamDeser? value = JsonSerializer.Deserialize<EachTeamDeser>(jsonString);
-
-                joinedTeams.Add(new Team()
-                {
-                    Id = item.id,
-                    DisplayName = item.displayName
-                });
-                joinedTeams.Add(new Team()
-                {
-                    CreatedDateTime = (DateTime)Convert.ChangeType(value.createdDateTime, typeof(DateTime)),
-                    WebUrl = value.webUrl,
-                    InternalId = value.internalId,
-                    Description = value.description,
-                });
-
-
-            }
-        }
+        
     }
-
 }

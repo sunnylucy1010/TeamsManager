@@ -9,8 +9,6 @@ namespace TeamsManager.ViewModels
         
         ///Login service
         
-
-        
         ///HTTP GET
         public static async Task<string> GetHttpContentWithToken(string url, string accessToken)
         {
@@ -30,5 +28,6 @@ namespace TeamsManager.ViewModels
                 return ex.ToString();
             }
         }
+
     }
 }
